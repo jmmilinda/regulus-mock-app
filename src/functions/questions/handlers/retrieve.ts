@@ -20,3 +20,13 @@ export const getQuestionById = async (events: any) => {
         body: JSON.stringify(results)
     };
 };
+
+export const getAllAsSort = async (events: any) => {
+    const questionService = new QuestionService(dynamoDBClient);
+    let results = await questionService.getAllAsLimit(events.pathParameters.id);
+ 
+    return {
+        statusCode: 200,
+        body: JSON.stringify(results)
+    };
+};

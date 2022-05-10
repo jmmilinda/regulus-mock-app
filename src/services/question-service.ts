@@ -14,22 +14,42 @@ export default class QuestionService {
         const id = uuid();
 
         const params = {
-            TableName: `${QUESTION}`,
-            Item: {
-                id,
-                sort: 'ITEM#WIP',
-                title: question.title,
-                name: question.name,
-                content: question.content,
-                updateTime: now,
-                createTime: now,
-                type: 'wip',
-                gsk1sort: 'ACTIVE#8888888888',
+            RequestItems: {
+                [`${QUESTION}`]: [
+                    {
+                        PutRequest: {
+                            Item: {
+                                id,
+                                sort: 'ITEM#HEADER',
+                                content: null,
+                                updateTime: now,
+                                createTime: now,
+                                type: 'header',
+                                gsk1sort: 'ACTIVE#9999999999',
+                            },
+                        },
+                    },
+                    {
+                        PutRequest: {
+                            Item: {
+                                id,
+                                sort: 'ITEM#WIP',
+                                title: question.title,
+                                name: question.name,
+                                content: JSON.stringify(question),
+                                updateTime: now,
+                                createTime: now,
+                                type: 'wip',
+                                gsk1sort: 'ACTIVE#8888888888',
+                            }
+                        }
+                    }
+                ]
             }
         };
 
         try {
-            await this.dynamoDBClient.put(params).promise();
+            await this.dynamoDBClient.batchWrite(params).promise();
             return { question, id };
         } catch (error) {
             console.error(error);
@@ -59,15 +79,15 @@ export default class QuestionService {
         }
     };
 
-    getAllAsLimit = async () => {
+    getAllAsLimit = async (id: string) => {
         try {
             const params = {
-                TableName: `${QUESTION}`,                
+                TableName: `${QUESTION}`,
                 KeyConditionExpression: 'id = :hashKey',
                 ExpressionAttributeValues: {
-                    ':hashKey': '123'                    
+                    ':hashKey': id
                 },
-                ScanIndexForward: false
+                Limit: 3
             };
             let results = this.dynamoDBClient.query(params).promise();
             return results;

@@ -7,12 +7,20 @@ export default {
                 {
                     AttributeName: "id",
                     AttributeType: "S"
+                },
+                {
+                    AttributeName: "type",
+                    AttributeType: "S"
                 }
             ],
             KeySchema: [
                 {
                     AttributeName: "id",
                     KeyType: "HASH"
+                },
+                {
+                    AttributeName: "type",
+                    KeyType: "RANGE"
                 }
             ],
             ProvisionedThroughput: {

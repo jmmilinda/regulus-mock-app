@@ -33,5 +33,16 @@ export default {
         },
       },
     ],
+  },
+  getAllQuestionsAsSorted: {
+    handler: `${handlerPath(__dirname)}/handlers/retrieve.getAllAsSort`,
+    events: [
+      {
+        http: {
+          method: 'get',
+          path: 'questions/{id}/sort'
+        },
+      },
+    ],
   }
 };
