@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid';
 export default class QuestionService {
     dynamoDBClient: DynamoDB.DocumentClient;
 
+
     constructor(db: DynamoDB.DocumentClient) {
         this.dynamoDBClient = db;
     }
@@ -21,11 +22,12 @@ export default class QuestionService {
                             Item: {
                                 id,
                                 sort: 'ITEM#HEADER',
-                                content: null,
                                 updateTime: now,
                                 createTime: now,
                                 type: 'header',
                                 gsk1sort: 'ACTIVE#9999999999',
+                                publishedVer: 4,
+                                latestVer: 5,
                             },
                         },
                     },
@@ -33,19 +35,84 @@ export default class QuestionService {
                         PutRequest: {
                             Item: {
                                 id,
-                                sort: 'ITEM#WIP',
+                                sort: 'VERSION#1',
                                 title: question.title,
                                 name: question.name,
-                                content: JSON.stringify(question),
+                                content: question.content,
                                 updateTime: now,
                                 createTime: now,
                                 type: 'wip',
-                                gsk1sort: 'ACTIVE#8888888888',
-                            }
-                        }
-                    }
-                ]
-            }
+                                version: 1,
+                                gsk1sort: `ACTIVE#WIP#${now}`,
+                            },
+                        },
+                    },
+                    {
+                        PutRequest: {
+                            Item: {
+                                id,
+                                sort: `VERSION#2`,
+                                title: question.title,
+                                name: question.name,
+                                content: question.content,
+                                updateTime: now,
+                                createTime: now,
+                                type: 'wip',
+                                version: 2,
+                                gsk1sort: `ACTIVE#WIP#${now}`,
+                            },
+                        },
+                    },
+                    {
+                        PutRequest: {
+                            Item: {
+                                id,
+                                sort: `VERSION#3`,
+                                title: question.title,
+                                name: question.name,
+                                content: question.content,
+                                updateTime: now,
+                                createTime: now,
+                                type: 'published',
+                                version: 3,
+                                gsk1sort: `ACTIVE#PUBLISHED#${now}`,
+                            },
+                        },
+                    },
+                    {
+                        PutRequest: {
+                            Item: {
+                                id,
+                                sort: `VERSION#4`,
+                                title: question.title,
+                                name: question.name,
+                                content: question.content,
+                                updateTime: now,
+                                createTime: now,
+                                type: 'published',
+                                version: 4,
+                                gsk1sort: `ACTIVE#PUBLISHED#${now}`,
+                            },
+                        },
+                    },
+                    {
+                        PutRequest: {
+                            Item: {
+                                id,
+                                sort: `VERSION#5`,
+                                title: question.title,
+                                name: question.name,
+                                content: question.content,
+                                updateTime: now,
+                                createTime: now,
+                                type: 'deleted',
+                                version: 5,
+                                gsk1sort: `DELETED#${now}`,
+                            },
+                        },
+                    },
+                ],
+            },
         };
 
         try {
